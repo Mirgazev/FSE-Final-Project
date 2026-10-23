@@ -3,7 +3,10 @@
 set -e
 
 echo "===1.Building wheel ==="
-pip wheel . --no-deps -w dist
+rm -rf /tmp/smoke-build
+python3 -m venv /tmp/smoke-build
+/tmp/smoke-build/bin/pip install torch --index-url https://download.pytorch.org/whl/cpu
+/tmp/smoke-build/bin/pip wheel . --no-deps -w dist
 
 echo "===2. Checking wheel tag ==="
 ls dist/*.whl | grep linux
@@ -13,8 +16,8 @@ rm -rf /tmp/smoke-venv
 python3 -m venv /tmp/smoke-venv
 
 echo "===4. Installing torch and our wheel ==="
-/tmp/smoke-venv/bin/pip install --timeout 60 torch --index-url https://download.pytorch.org/whl/cpu
-/tmp/smoke-venv/bin/pip install --timeout 60 dist/*.whl
+/tmp/smoke-venv/bin/pip install torch --index-url https://download.pytorch.org/whl/cpu
+/tmp/smoke-venv/bin/pip install dist/*.whl
 
 echo "=== 5. Testing import and call from neutral directory ==="
 cd /tmp

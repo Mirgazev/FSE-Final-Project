@@ -6,5 +6,6 @@ install:
 	python3 -m pip install dist/*.whl
 test: 
 	python3 -m pytest -q tests/
-clean: 
-	rm -rf dist build __pycache__ *.egg-info
+clean:
+	rm -rf dist build *.egg-info .pytest_cache
+	find . -type d -name "__pycache__" -exec rm -rf {} + 
