@@ -56,3 +56,16 @@ def test_error_path():
     
     with pytest.raises(RuntimeError, match="dead_zone expects torch.float32"):
         dead_zone(x)
+        
+def test_error_cpu_only():
+    """5b. Test that a non-CPU tensor raises RuntimeError via TORCH_CHECK."""
+    # На машине без GPU мы не можем создать настоящий CUDA-тензор. 
+    # Но мы можем создать "фейковый" тензор на мета-устройстве (meta device), 
+    # который имитирует не-CPU тензор для проверки логики.
+    try:
+        x = torch.empty(3, device="meta") 
+    except RuntimeError:
+        pytest.skip("Meta device is not supported in this PyTorch version")
+        
+    with pytest.raises(RuntimeError, match="dead_zone expects a CPU tensor"):
+        dead_zone(x)
