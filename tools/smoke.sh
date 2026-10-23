@@ -3,7 +3,7 @@
 set -e
 
 echo "===1.Building wheel ==="
-pip wheel . --no-deps --timeout 60 -w dist
+pip wheel . --no-deps -w dist
 
 echo "===2. Checking wheel tag ==="
 ls dist/*.whl | grep linux
