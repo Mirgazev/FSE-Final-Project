@@ -7,5 +7,6 @@ install:
 test: 
 	python3 -m pytest -q tests/
 clean:
-	rm -rf dist build *.egg-info .pytest_cache
-	find . -type d -name "__pycache__" -exec rm -rf {} + 
+	rm -rf dist build .pytest_cache
+	find . -type d -name "__pycache__" -exec rm -rf {} +
+	find . -type d -name "*.egg-info" -exec rm -rf {} +
