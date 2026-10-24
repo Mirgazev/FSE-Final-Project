@@ -1,0 +1,49 @@
+name: CI
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install C++ build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential
+
+      - name: Install build and dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install setuptools wheel ruff
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Ruff
+        run: ruff check .
+
+      - name: Build wheel
+        run: |
+          python -m pip wheel . --no-deps --no-build-isolation -w dist
+
+      - name: Install wheel into a fresh environment
+        run: |
+          python -m venv "$RUNNER_TEMP/try-venv"
+          "$RUNNER_TEMP/try-venv/bin/python" -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          "$RUNNER_TEMP/try-venv/bin/python" -m pip install dist/*.whl pytest
+
+      - name: Pytest tests
+        run: |
+          cp -r tests "$RUNNER_TEMP/project-tests"
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/try-venv/bin/python" -m pytest -q "$RUNNER_TEMP/project-tests"
