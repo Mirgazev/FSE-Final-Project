@@ -18,6 +18,8 @@ The operation was profiled on a CPU tensor containing 5,000,000 `float32` elemen
 
 Command used:
 
+```bash
 /tmp/smoke-venv/bin/python -m cProfile -s cumulative tools/profile.py
+```
 
 `cProfile` reported 1.467 seconds for the complete program. The 50 calls to the compiled `fse_ops._C.dead_zone` function used 0.317 seconds cumulatively, with 0.006 seconds per call reported by `cProfile`.
